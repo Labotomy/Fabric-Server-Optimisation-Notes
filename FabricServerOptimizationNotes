@@ -1,0 +1,65 @@
+
+Fabric Server Optimizations - Note: This is based off an AMD Ryzen 9 5950X with 8GB Ram Host (OS overhead does not impact Ram allocation)
+- reduced simulation distance to match view distance. Simulation distance is when entities get ticked/activated by the server when in proximity to a player.   
+    -Wildlife ticks were a substantial part of of the Spark sampling.
+* If using FerriteCore and Lithium: FerriteCore change: smallThreadingDetector = false - Lithium's performs better 
+- Implementing Carpet
+- Dimensional Threading - Initially was fine, my number of dimensions did not match the number of assigned threads and caused a server crash 
+    - *Need to test with less dimensions
+- ServerCore which should bring some spigot & paper features to fabric
+    - config change:
+            - # (Default = false) Prevents players from moving into unloaded chunks.     
+                prevent_moving_into_unloaded_chunks = true
+            - # (Default = 128) The radius at which the game will look for other portals. Lower values can reduce lagspikes.     
+                portal_search_radius = 64  (was 128)
+            - # (Default = false) Makes villagers tick less often if they are stuck in a 1x1 space.    
+                lobotomize_villagers = true
+           -  [dynamic]     
+              # (Default = false) Enables this feature.     
+                enabled = true
+           -  # Stops entities from ticking if they are too far away. 
+              [activation_range]     
+           -  # (Default = false) Enables this feature.     
+              enabled = true
+           - use_vertical_range = true
+           - villager_activation_range = 8 (was 16)
+           - monster_activation_range = 10 (was 32)
+           - animal_activation_range = 4 (was 16, but there are a lot of animals)
+           - flying_activation_range = 12 (was 48)
+           - water_activation_range = 10 (was 16)
+           - neutral_activation_range = 10 (was 24)
+           - zombie_activation_range = 10 (was 16)
+           - misc_activation_range = 8 (was 16)
+           - All tick-inactive to false (orig true) (edited)
+
+
+
+
+
+
+Specific to Better Minecraft [FABRIC] 1.18.1-HF
+- Advancements Debug mod: https://www.curseforge.com/minecraft/mc-mods/advancements-debug
+       - This cut down a huge amount of log spam and increased MSPT from 1800 to 270 
+- Chunky Caching for all dimensions - This is especially important for custom generated dimensions due to questionable generator optimisations.
+       - Started at 1000 radius, increased to 3000
+
+* Recommending Players check their settings:
+Better Minecraft 1.18.1
+RECOMENDED
+World Type: Default
+Allocated Client RAM: 6GB
+Allocated Server RAM: 5GB Recommended for 1 - 5 Players, 1GB for every player after that
+Java: 17
+
+
+
+
+
+
+
+3- Today, implementing some Fabric Server optimizations:   https://gist.github.com/Obydux/55b967f5dcc00633fe895e5a473363d5
+-- Reverted max-tick-time to 120000, server crashes on load when it goes to 3, verifying this is the problem flag. I miss-read, suggestion is -1 which is a bad idea. (edited)
+
+LowOnEspresso — 04/08/2022
+15- Implementing Carpet-Fixes    Clients could use Blanket https://www.curseforge.com/minecraft/mc-mods/blanket    -disabled on server crashes on loading, investigating (edited)
+
