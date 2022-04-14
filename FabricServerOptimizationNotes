@@ -31,7 +31,8 @@ Fabric Server Optimizations - Note: This is based off an AMD Ryzen 9 5950X with 
            - zombie_activation_range = 10 (was 16)
            - misc_activation_range = 8 (was 16)
            - All tick-inactive to false (orig true) (edited)
-
+      ** If you make changes to the servercore config file, to load and save you may need to run the command:  servercore config reload
+        - You can also manipulate config values in game if you are op, when doen run: sc config save
 
 
 
